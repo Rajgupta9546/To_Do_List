@@ -1,57 +1,71 @@
 import { useState } from "react";
+import Header from "./Components/Header";
+import ToDoList from "./Components/ToDoList";
+import "./index.css";
+
 
 function App() {
-  const [task, setTask] = useState("");
   const [todos, setTodos] = useState([]);
+  const [input, setInput] = useState("");
 
+  // Add Todo
   const addTodo = () => {
-    if (task.trim() === "") return;
+    if (input.trim() === "") return;
 
-    setTodos([...todos, { text: task, completed: false }]);
-    setTask("");
+    const newTodo = {
+      id: Date.now(),
+      text: input,
+      completed: false,
+    };
+
+    setTodos([...todos, newTodo]);
+    setInput("");
   };
 
-  const deleteTodo = (index) => {
-    const updated = todos.filter((_, i) => i !== index);
-    setTodos(updated);
+  // Delete Todo
+  const deleteTodo = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
   };
 
-  const toggleComplete = (index) => {
-    const updated = [...todos];
-    updated[index].completed = !updated[index].completed;
-    setTodos(updated);
+  // Toggle Complete
+  const toggleComplete = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
+
+  // Edit Todo
+  const editTodo = (id, newText) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, text: newText } : todo
+      )
+    );
   };
 
   return (
-    <div>
-      <h1>My To-Do List</h1>
+    <div className="container">
+     
+      <Header />
+      <div className="input-section">
+        <input
+          type="text"
+          value={input}
+          placeholder="Enter a task..."
+          onChange={(e) => setInput(e.target.value)}
+          
+        />
+        <button onClick={addTodo}>Add</button>
+      </div>
 
-      <input
-        type="text"
-        value={task}
-        placeholder="Enter task..."
-        onChange={(e) => setTask(e.target.value)}
+      <ToDoList
+        todos={todos}
+        deleteTodo={deleteTodo}
+        toggleComplete={toggleComplete}
+        editTodo={editTodo}
       />
-
-      <button onClick={addTodo}>Add</button>
-
-      <ul>
-        {todos.map((item, index) => (
-          <li key={index}>
-            <span
-              onClick={() => toggleComplete(index)}
-              style={{
-                textDecoration: item.completed ? "line-through" : "none",
-                cursor: "pointer",
-              }}
-            >
-              {item.text}
-            </span>
-
-            <button onClick={() => deleteTodo(index)}>Delete</button>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
