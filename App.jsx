@@ -6,9 +6,13 @@ function App() {
 
   const addTodo = () => {
     if (task.trim() === "") return;
-
     setTodos([...todos, task]);
     setTask("");
+  };
+
+  const deleteTodo = (index) => {
+    const updatedTodos = todos.filter((_, i) => i !== index);
+    setTodos(updatedTodos);
   };
 
   return (
@@ -26,7 +30,10 @@ function App() {
 
       <ul>
         {todos.map((item, index) => (
-          <li key={index}>{item}</li>
+          <li key={index}>
+            {item}
+            <button onClick={() => deleteTodo(index)}>Delete</button>
+          </li>
         ))}
       </ul>
     </div>
